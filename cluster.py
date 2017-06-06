@@ -6,28 +6,17 @@
 
 import operator
 from collections import Counter
+from nltk.metrics import edit_distance
 
 
-def levenshtein(s1, s2):
-    if len(s1) < len(s2):
-        return levenshtein(s2, s1)
-
-    # len(s1) >= len(s2)
-    if len(s2) == 0:
-        return len(s1)
-
-    previous_row = range(len(s2) + 1)
-    for i, c1 in enumerate(s1):
-        current_row = [i + 1]
-        for j, c2 in enumerate(s2):
-            insertions = previous_row[
-                             j + 1] + 1  # j+1 instead of j since previous_row and current_row are one character longer
-            deletions = current_row[j] + 1  # than s2
-            substitutions = previous_row[j] + (c1 != c2)
-            current_row.append(min(insertions, deletions, substitutions))
-        previous_row = current_row
-
-    return previous_row[-1]
+def lcs_length(a, b):
+    table = [[0] * (len(b) + 1) for _ in range(len(a) + 1)]
+    for i, ca in enumerate(a, 1):
+        for j, cb in enumerate(b, 1):
+            table[i][j] = (
+                table[i - 1][j - 1] + 1 if ca == cb else
+                max(table[i][j - 1], table[i - 1][j]))
+    return table[-1][-1]
 
 
 def read_train_file(lang, g2p):
@@ -71,8 +60,7 @@ def write_cluster_file(l1, l2, clusts, g2p):
 
 
 if __name__ == '__main__':
-    lang1, lang2 = 'bul', 'rus'
-    g2p = True
+    lang1, lang2, g2p = 'ces', 'pol', False
     lang1_vocab = read_train_file(lang1, g2p)
     lang2_vocab = read_train_file(lang2, g2p)
     clusters = {t: {} for t, c in sorted(lang1_vocab.items(), key=operator.itemgetter(1), reverse=True)[:100]}
@@ -84,7 +72,7 @@ if __name__ == '__main__':
         old_dist = 1000
         old_clust = ''
         for c in clusters:
-            new_dist = levenshtein(word, c)
+            new_dist = edit_distance(word, c)
             if new_dist < old_dist:
                 old_dist = new_dist
                 old_clust = c

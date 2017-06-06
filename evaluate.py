@@ -26,20 +26,13 @@ def read_clusters(l1, l2, g2p):
                         token, count = word.split()
                         clusters[cluster][token] = Decimal(count)
                     else:
-                        clusters[''][''] = Decimal(word)
-
+                        clusters[cluster][''] = Decimal(word)
     c.close()
-    sum_mapped_words = 0
-    # outfile = open(l1 + '_' + l2 + '.classes', 'w+')
+
     for clust, tokens in sorted(clusters.items(), key=operator.itemgetter(0)):
         cluster_count = sum(tokens.values())
-        num_tokens = len(tokens)
-        sum_mapped_words += num_tokens
-        # outfile.write(c + ' has ' + str(num_tokens) + ' word(s) mapped to it' + '\n')
         for toke, cnt in tokens.items():
             pwc[toke] = (cnt / cluster_count, clust)
-    # outfile.write('avg:' + str(sum_mapped_words / 100))
-    # outfile.close()
     return pwc
 
 
@@ -63,13 +56,12 @@ def read_vocab(lang, g2p):
     return {cl: co / class_count for cl, co in vocab.items()}
 
 if __name__ == '__main__':
-    lang1, lang2 = 'bul', 'rus'
-    g2p = True
+    lang1, lang2, g2p = 'bul', 'rus', False
     pwc = read_clusters(lang1, lang2, g2p)
     pc = read_vocab(lang1, g2p)
     oov_words = Counter()
     surprisal_by_token = {}
-    test_tokens = []
+    total_tokens = 0
 
     if g2p:
         test = open('test_articles_g2p.' + lang2, encoding='utf-8')
@@ -78,11 +70,11 @@ if __name__ == '__main__':
 
     sum_surprisals = 0.0
     for line in test:
+        total_tokens += 1
         if g2p:
             token = ''.join(symb for symb in line.strip().split()[1:])
         else:
             token = line.strip()
-        test_tokens.append(token)
         if token in pwc:
             prob_wc = pwc[token][0]
             clas = pwc[token][1]
@@ -94,9 +86,8 @@ if __name__ == '__main__':
             oov_words.update([token])
     test.close()
 
-    total_tokens = len(test_tokens)
-    entropy = sum_surprisals / total_tokens
-    perplexity = math.pow(2, entropy)
+    cross_entropy = sum_surprisals / total_tokens
+    perplexity = math.pow(2, cross_entropy)
     print('for the language pair ' + lang1 + '/' + lang2 + ':')
     print('perplexity =', perplexity)
     print('oov rate =', sum(oov_words.values()) / total_tokens)

@@ -8,7 +8,6 @@
 import os
 import string
 import random
-import sys
 
 
 def optimal_split(articles):
