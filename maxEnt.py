@@ -54,7 +54,9 @@ y = tf.nn.softmax(tf.add(tf.matmul(x, W), b))
 
 
 def log2(x):
-    return tf.log(x) / tf.log(tf.constant(2, dtype=numerator.dtype))
+    numerator = tf.log(x)
+    denominator = tf.log(tf.constant(2, dtype=numerator.dtype))
+    return numerator / denominator
 
 
 # training
