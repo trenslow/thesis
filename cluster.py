@@ -1,22 +1,12 @@
 #!/usr/bin/python3
 # This script takes as its input a file that lists the unique tokens found in a language's corpus and clusters them. The
 # clustering is done by taking a pre-defined number of clusters from the most frequently occurring tokens in language
-# 1 and assigning each token from language 2 to these clusters based on minimal Levenshtein distance. It then calculates
-# the probabilities of a word given a class.
+# 1 and assigning each token from language 2 to these clusters based on minimal Levenshtein distance or the Longest Common
+# Substring. It then calculates the probabilities of a word given the class it belongs to.
 
 import operator
 from collections import Counter
 from nltk.metrics import edit_distance
-
-
-def lcs_length(a, b):
-    table = [[0] * (len(b) + 1) for _ in range(len(a) + 1)]
-    for i, ca in enumerate(a, 1):
-        for j, cb in enumerate(b, 1):
-            table[i][j] = (
-                table[i - 1][j - 1] + 1 if ca == cb else
-                max(table[i][j - 1], table[i - 1][j]))
-    return table[-1][-1]
 
 
 def read_train_file(lang, g2p):
@@ -60,10 +50,12 @@ def write_cluster_file(l1, l2, clusts, g2p):
 
 
 if __name__ == '__main__':
-    lang1, lang2, g2p = 'ces', 'pol', False
+    lang1, lang2 = 'ces', 'pol'
+    g2p = True
     lang1_vocab = read_train_file(lang1, g2p)
+    most_freq_l1 = {t: c for t, c in sorted(lang1_vocab.items(), key=operator.itemgetter(1), reverse=True)[:100]}
     lang2_vocab = read_train_file(lang2, g2p)
-    clusters = {t: {} for t, c in sorted(lang1_vocab.items(), key=operator.itemgetter(1), reverse=True)[:100]}
+    clusters = {c: {} for c in most_freq_l1}
 
     write_vocab_file(lang1, lang1_vocab, g2p)
     write_vocab_file(lang2, lang2_vocab, g2p)
@@ -71,7 +63,7 @@ if __name__ == '__main__':
     for word, count in lang2_vocab.items():
         old_dist = 1000
         old_clust = ''
-        for c in clusters:
+        for c, cnt in sorted(most_freq_l1.items(), key=operator.itemgetter(1), reverse=True):
             new_dist = edit_distance(word, c)
             if new_dist < old_dist:
                 old_dist = new_dist

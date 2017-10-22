@@ -1,38 +1,43 @@
 import math
 from collections import Counter
-from decimal import Decimal
 import operator
 
 
 def read_clusters(l1, l2, g2p):
     clusters = {}
     pwc = {}
-
     if g2p:
-        c = open('clusters_g2p.' + l1 + '.' + l2, encoding='utf-8')
+        cluster_file = open('clusters_g2p.' + l1 + '.' + l2, encoding='utf-8')
     else:
-        c = open('clusters.' + l1 + '.' + l2, encoding='utf-8')
+        cluster_file = open('clusters.' + l1 + '.' + l2, encoding='utf-8')
+
     cluster = ''
-    for line in c:
+    for line in cluster_file:
         stripped = line.strip()
         if ':' in stripped:
-            cluster = stripped.replace(':', '')
+            cluster = stripped[:-1]
             clusters[cluster] = {}
         else:
             words = stripped.split(',')
-            for word in words:
-                if word:
-                    if len(word.split()) == 2:
-                        token, count = word.split()
-                        clusters[cluster][token] = Decimal(count)
+            if len(words[0]) > 0:
+                for word in words:
+                    split = word.split()
+                    if len(split) == 1:
+                        clusters[cluster][''] = float(split[0])
                     else:
-                        clusters[cluster][''] = Decimal(word)
-    c.close()
+                        token, count = word.split()
+                        clusters[cluster][token] = float(count)
+                    
+    cluster_file.close()
 
-    for clust, tokens in sorted(clusters.items(), key=operator.itemgetter(0)):
+    sum_mapped_words = 0.0
+    for c, tokens in sorted(clusters.items(), key=operator.itemgetter(0)):
         cluster_count = sum(tokens.values())
+        num_tokens = len(tokens)
+        sum_mapped_words += num_tokens
         for toke, cnt in tokens.items():
-            pwc[toke] = (cnt / cluster_count, clust)
+            pwc[toke] = (cnt / cluster_count, c)
+
     return pwc
 
 
@@ -42,26 +47,26 @@ def read_vocab(lang, g2p):
         voc = open('vocab_g2p.' + lang)
     else:
         voc = open('vocab.' + lang)
-
     for line in voc.readlines()[:100]:
-        ln = line.strip().split()
-        if len(ln) == 2:
-            clust, count = ln[0], ln[1]
-            vocab[clust] = Decimal(count)
+        split = line.strip().split()
+        if len(split) == 1:
+            vocab[''] = float(split[0])
         else:
-            vocab[''] = Decimal(ln[0])
+            clust, count = split
+            vocab[clust] = float(count)
     voc.close()
-
     class_count = sum(vocab.values())
     return {cl: co / class_count for cl, co in vocab.items()}
 
+
 if __name__ == '__main__':
-    lang1, lang2, g2p = 'bul', 'rus', False
+    lang1, lang2 = 'ces', 'pol'
+    g2p = True
     pwc = read_clusters(lang1, lang2, g2p)
     pc = read_vocab(lang1, g2p)
     oov_words = Counter()
     surprisal_by_token = {}
-    total_tokens = 0
+    num_test_tokens = 0
 
     if g2p:
         test = open('test_articles_g2p.' + lang2, encoding='utf-8')
@@ -70,7 +75,7 @@ if __name__ == '__main__':
 
     sum_surprisals = 0.0
     for line in test:
-        total_tokens += 1
+        num_test_tokens += 1
         if g2p:
             token = ''.join(symb for symb in line.strip().split()[1:])
         else:
@@ -79,25 +84,20 @@ if __name__ == '__main__':
             prob_wc = pwc[token][0]
             clas = pwc[token][1]
             prob_c = pc[clas]
-            surprisal = -math.log(prob_wc, 2) - math.log(prob_c, 2)
+            surprisal = -math.log2(prob_c) - math.log2(prob_wc)
             surprisal_by_token[token] = (surprisal, clas)
             sum_surprisals += surprisal
         else:
             oov_words.update([token])
     test.close()
 
-    cross_entropy = sum_surprisals / total_tokens
-    perplexity = math.pow(2, cross_entropy)
+    entropy = sum_surprisals / num_test_tokens
+    perplexity = 2**entropy
     print('for the language pair ' + lang1 + '/' + lang2 + ':')
     print('perplexity =', perplexity)
-    print('oov rate =', sum(oov_words.values()) / total_tokens)
-    print('total test tokens = ', total_tokens)
+    print('oov rate =', sum(oov_words.values()) / num_test_tokens)
+    print('number of test tokens = ', num_test_tokens)
 
-    if g2p:
-        out = open('surprisal_g2p.' + lang1 + '.' + lang2, 'w+')
-    else:
-        out = open('surprisal.' + lang1 + '.' + lang2, 'w+')
-
-    for token, double in sorted(surprisal_by_token.items(), key=operator.itemgetter(0)):
-        out.write(token + ' ' + str(double[0]) + ' ' + double[1] + '\n')
-    out.close()
+    with open('surprisal.' + lang1 + '.' + lang2, 'w+') as out:
+        for token, double in sorted(surprisal_by_token.items(), key=operator.itemgetter(0)):
+            out.write(token + ' ' + str(double[0]) + ' ' + double[1] + '\n')

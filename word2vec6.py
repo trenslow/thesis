@@ -14,13 +14,16 @@ def lcs_length(a, b):
     return table[-1][-1]
 
 
-def get_clusters(l1, l2, g2p):
-    if g2p:
+def get_clusters(l1, l2, clusts):
+    if clusts == 0:
         with open('clusters_g2p.' + l1 + '.' + l2, encoding='utf-8') as cluster_file:
             return {cluster.strip()[:-1] for cluster in islice(cluster_file, 0, None, 2)}
-    else:
+    elif clusts == 1:
         with open('clusters.' + l1 + '.' + l2, encoding='utf-8') as cluster_file:
             return {cluster.strip()[:-1] for cluster in islice(cluster_file, 0, None, 2)}
+    elif clusts == 2:
+        with open('clusters_reconstructed.' + l1 + '.' + l2, encoding='utf-8') as cluster_file:
+            return {line.strip().split()[0] for line in cluster_file}  # takes either xformed version or un-xformed
 
 
 def make_translation_map(l2):
@@ -68,12 +71,13 @@ def maximize_common_substring(clusters, rep):
 
 if __name__ == '__main__':
     lang1, lang2 = 'bul', 'rus'
-    l1_clusters = get_clusters(lang1, lang2, False)
-    l1_g2p_clusters = get_clusters(lang1, lang2, True)
+    l1_clusters = get_clusters(lang1, lang2, 0)
+    l1_g2p_clusters = get_clusters(lang1, lang2, 1)
+    l1_clusters_reconstructed = get_clusters(lang1, lang2, 2)
     g2p_map, ed_ceiling = make_translation_map(lang2)
 
     with open('training_articles.' + lang2,
-              encoding='utf-8') as train, open('vectors.' + lang1 + '.' + lang2, 'w+', encoding='utf-8') as out:
+              encoding='utf-8') as train, open('vectors6.' + lang1 + '.' + lang2, 'w+', encoding='utf-8') as out:
         for line in train:
             graph_rep = line.strip()
             min_ed_graph = minimize_edit_distance(l1_clusters, graph_rep)
@@ -85,5 +89,8 @@ if __name__ == '__main__':
             else:
                 min_ed_phone = ed_ceiling
                 max_cs_phone = 0
-            vector = [min_ed_graph, max_cs_graph, min_ed_phone, max_cs_phone, graph_rep]
+            min_ed_graph_recon = minimize_edit_distance(l1_clusters_reconstructed, graph_rep)
+            max_cs_graph_recon = maximize_common_substring(l1_clusters_reconstructed, graph_rep)
+            vector = [min_ed_graph, max_cs_graph, min_ed_phone, max_cs_phone,
+                      min_ed_graph_recon, max_cs_graph_recon, graph_rep]
             out.write(' '.join(str(el) for el in vector) + '\n')
