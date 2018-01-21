@@ -16,14 +16,21 @@ def lcs_length(a, b):
 
 def get_clusters(l1, l2, clusts):
     if clusts == 0:
-        with open('clusters_g2p.' + l1 + '.' + l2, encoding='utf-8') as cluster_file:
+        with open('clusters.' + l1 + '.' + l2, encoding='utf-8') as cluster_file:
             return {cluster.strip()[:-1] for cluster in islice(cluster_file, 0, None, 2)}
     elif clusts == 1:
-        with open('clusters.' + l1 + '.' + l2, encoding='utf-8') as cluster_file:
+        with open('clusters_g2p.' + l1 + '.' + l2, encoding='utf-8') as cluster_file:
             return {cluster.strip()[:-1] for cluster in islice(cluster_file, 0, None, 2)}
     elif clusts == 2:
         with open('clusters_reconstructed.' + l1 + '.' + l2, encoding='utf-8') as cluster_file:
-            return {line.strip().split()[0] for line in cluster_file}  # takes either xformed version or un-xformed
+            recons = set()
+            for line in cluster_file:
+                split = line.strip().split()
+                if len(split) == 2:  # if successful xformation, take xformed version
+                    recons.add(split[1])
+                else:  # if unsuccessful xformation, take original word
+                    recons.add(split[0])
+            return recons
 
 
 def make_translation_map(l2):
@@ -40,6 +47,7 @@ def make_translation_map(l2):
                 g2p[grapheme_rep] = phoneme_rep
             else:
                 g2p[grapheme_rep] = None
+                
     with open('training_articles_g2p.' + l2 + '.err', encoding='utf-8') as l2f:
         for line in l2f.readlines()[:-1]:
             fail = re.findall(r'"(.*?)"', line)[0]
@@ -70,7 +78,7 @@ def maximize_common_substring(clusters, rep):
 
 
 if __name__ == '__main__':
-    lang1, lang2 = 'bul', 'rus'
+    lang1, lang2 = 'pol', 'ces'
     l1_clusters = get_clusters(lang1, lang2, 0)
     l1_g2p_clusters = get_clusters(lang1, lang2, 1)
     l1_clusters_reconstructed = get_clusters(lang1, lang2, 2)

@@ -1,5 +1,7 @@
-.idea/workspace.xml
-/wiki_bul_rus
-/wiki_ces_pol
+.idea/
+venv/
+logs/
 *articles*
 vectors*
+gold_data_test
+yo.py

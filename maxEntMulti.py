@@ -18,10 +18,10 @@ def read_file(file):
     vcb = {}
     
     with open(file) as inpt:
-        # for line in inpt:  # for looping over whole dataset
-        for line in itertools.islice(inpt, 678790):  # for taking first n lines of dataset (for development)
+        for line in inpt:  # for looping over whole dataset
+        # for line in itertools.islice(inpt, 49999):  # for taking first n lines of dataset (for development)
             split = line.strip().split()
-            feat_vec = [float(val) for val in split[:-1]]
+            feat_vec = [float(val) for val in split[1:2]]
             feats.append(feat_vec)
             wrd = split[-1]
             wrds.append(wrd)
@@ -32,7 +32,7 @@ def read_file(file):
 
 
 def lookup_numeric_labels(word_list, voc):
-    # maps each unqiue word to a unique integer label
+    # maps each unique word to a unique integer label
     labels = []
     for word in word_list:
         label = voc[word]
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     num_gpus = 4
 
 
-    def make_parallel(fn, num_gpus, **kwargs):
+    def parallelize(fn, num_gpus, **kwargs):
     	# input data comes in as a multiple of num_gpus
         input_split = {}
         for k, v in kwargs.items():
@@ -79,8 +79,10 @@ if __name__ == '__main__':
 
     def maxEnt_model(ex, y_tru):
     	# draw graph (Multinomial Logistic Regression/Log-Linear model)
-        W = tf.Variable(tf.zeros([num_features, num_classes]), name='W')
+        # W = tf.Variable(tf.zeros([num_features, num_classes]), name='W')
+        W = tf.get_variable('W', [num_features, num_classes], initializer=tf.contrib.layers.xavier_initializer())  # based on Glorot and Bengio (2010)
         b = tf.Variable(tf.zeros([num_classes]), name='b')
+        # calculate log probs based on Beta_0 + Beta_1 * x
         y = tf.add(tf.matmul(ex, W), b)
         # sparse loss function used to speed up computation
         # using unique labels is a lot less to hold in memory than one-hot vectors of vocab size dimensions
@@ -91,7 +93,7 @@ if __name__ == '__main__':
     x = tf.placeholder(tf.float32, [None, num_features], name='x')
     y_true = tf.placeholder(tf.int32, [None, 1], name='y_true')
 
-    loss_function = make_parallel(maxEnt_model, num_gpus, ex=x, y_tru=y_true)
+    loss_function = parallelize(maxEnt_model, num_gpus, ex=x, y_tru=y_true)
     learning_rate = 0.001
     optimizer = tf.train.AdamOptimizer(learning_rate).minimize(loss_function, colocate_gradients_with_ops=True)
 
@@ -100,8 +102,8 @@ if __name__ == '__main__':
     config.gpu_options.allow_growth = True
     with tf.Session(config=config) as sess:
         sess.run(tf.global_variables_initializer())
-        old_loss = 1.0
-        tol = 0.01
+        old_PP = 1.0
+        tol = 0.05
         max_iter = 100
         for j in range(max_iter):
             start = time.time()
@@ -117,13 +119,14 @@ if __name__ == '__main__':
                 total_loss += batch_loss
 
             print('after epoch:', j+1)
+            # print(sess.run([tf.contrib.framework.get_variables_by_name('W')]))
             print('W:', np.mean(sess.run(tf.contrib.framework.get_variables_by_name('W'))[0], axis=1))
             avg_loss = total_loss / num_tokens
             print('average loss:', avg_loss)
             perplexity = np.exp(avg_loss)  # TensorFlow's cross entropy is calculated with natural log
             print('perplexity:', perplexity)
             print('time:', time.time() - start)
-            if np.abs(1.0 - avg_loss / old_loss) < tol:
+            if np.abs(1.0 - perplexity / old_PP) < tol:
                 print('model converged')
                 break
-            old_loss = avg_loss
+            old_PP = perplexity

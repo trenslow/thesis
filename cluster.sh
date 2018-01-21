@@ -1,5 +1,5 @@
 #$ -S /bin/bash
-#$ -l hostname=cl13lx
+#$ -l hostname=cl14lx
 #$ -cwd
 #$ -V
 #$ -o /nethome/trenslow/thesis/logs/
