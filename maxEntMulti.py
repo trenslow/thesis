@@ -15,13 +15,13 @@ def chunks(l, n):
 def read_file(file):
     feats = []
     wrds = []
-    vcb = {}
+    vcb = {'UNK': 0}
     
     with open(file) as inpt:
         for line in inpt:  # for looping over whole dataset
-        # for line in itertools.islice(inpt, 49999):  # for taking first n lines of dataset (for development)
+        #for line in itertools.islice(inpt, 49999):  # for taking first n lines of dataset (for development)
             split = line.strip().split()
-            feat_vec = [float(val) for val in split[1:2]]
+            feat_vec = [float(val) for val in split[:3]] + [float(val) for val in split[4:-1]]
             feats.append(feat_vec)
             wrd = split[-1]
             wrds.append(wrd)
@@ -33,18 +33,16 @@ def read_file(file):
 
 def lookup_numeric_labels(word_list, voc):
     # maps each unique word to a unique integer label
-    labels = []
-    for word in word_list:
-        label = voc[word]
-        labels.append([label])
-    return np.array(labels)
+    return np.array([[voc[word]] if word in voc else voc['UNK'] for word in word_list])
 
 
 if __name__ == '__main__':
     langs = sys.argv[1:3]
     lang1, lang2 = langs[0], langs[1]
     print(lang1, lang2)
-    features, words, vocab = read_file('vectors6.' + lang1 + '.' + lang2)
+    features, words, vocab = read_file('data/vectors6.' + lang1 + '.' + lang2)
+    #test_x, test_words, test_vocab = read_file('test_vectors6.' + lang1 + '.' + lang2)
+    #test_y_true = lookup_numeric_labels(test_words, vocab)
     num_classes = len(vocab)
     print('vocab size: ' + str(num_classes))
     num_features = len(features[0])
@@ -119,7 +117,6 @@ if __name__ == '__main__':
                 total_loss += batch_loss
 
             print('after epoch:', j+1)
-            # print(sess.run([tf.contrib.framework.get_variables_by_name('W')]))
             print('W:', np.mean(sess.run(tf.contrib.framework.get_variables_by_name('W'))[0], axis=1))
             avg_loss = total_loss / num_tokens
             print('average loss:', avg_loss)

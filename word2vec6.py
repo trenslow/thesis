@@ -16,13 +16,13 @@ def lcs_length(a, b):
 
 def get_clusters(l1, l2, clusts):
     if clusts == 0:
-        with open('clusters.' + l1 + '.' + l2, encoding='utf-8') as cluster_file:
+        with open('data/clusters.' + l1 + '.' + l2, encoding='utf-8') as cluster_file:
             return {cluster.strip()[:-1] for cluster in islice(cluster_file, 0, None, 2)}
     elif clusts == 1:
-        with open('clusters_g2p.' + l1 + '.' + l2, encoding='utf-8') as cluster_file:
+        with open('data/clusters_g2p.' + l1 + '.' + l2, encoding='utf-8') as cluster_file:
             return {cluster.strip()[:-1] for cluster in islice(cluster_file, 0, None, 2)}
     elif clusts == 2:
-        with open('clusters_reconstructed.' + l1 + '.' + l2, encoding='utf-8') as cluster_file:
+        with open('data/clusters_reconstructed.' + l1 + '.' + l2, encoding='utf-8') as cluster_file:
             recons = set()
             for line in cluster_file:
                 split = line.strip().split()
@@ -33,10 +33,17 @@ def get_clusters(l1, l2, clusts):
             return recons
 
 
-def make_translation_map(l2):
+def make_translation_map(l2, tst):
     g2p = OD()
     old_graph_len = 0
-    with open('training_articles_g2p.' + l2, encoding='utf-8') as l2s:
+    if tst:
+        g2p_in = 'test_articles_g2p.' + l2
+        g2p_err_in = 'test_articles_g2p.' + l2 + '.err'
+    else:
+        g2p_in = 'training_articles_g2p.' + l2
+        g2p_err_in = 'training_articles_g2p.' + l2 + '.err'
+
+    with open('data/' + g2p_in, encoding='utf-8') as l2s:
         for line in l2s.readlines():
             split = line.strip().split()
             grapheme_rep, phoneme_rep = split[0], ''.join(char for char in split[1:])
@@ -48,7 +55,7 @@ def make_translation_map(l2):
             else:
                 g2p[grapheme_rep] = None
                 
-    with open('training_articles_g2p.' + l2 + '.err', encoding='utf-8') as l2f:
+    with open('data/' + g2p_err_in, encoding='utf-8') as l2f:
         for line in l2f.readlines()[:-1]:
             fail = re.findall(r'"(.*?)"', line)[0]
             fail_len = len(fail)
@@ -78,15 +85,23 @@ def maximize_common_substring(clusters, rep):
 
 
 if __name__ == '__main__':
-    lang1, lang2 = 'pol', 'ces'
+    lang1, lang2 = 'rus', 'bul'
+    test = True
     l1_clusters = get_clusters(lang1, lang2, 0)
     l1_g2p_clusters = get_clusters(lang1, lang2, 1)
     l1_clusters_reconstructed = get_clusters(lang1, lang2, 2)
-    g2p_map, ed_ceiling = make_translation_map(lang2)
+    g2p_map, ed_ceiling = make_translation_map(lang2, test)
+    data_dir = 'data/'
 
-    with open('training_articles.' + lang2,
-              encoding='utf-8') as train, open('vectors6.' + lang1 + '.' + lang2, 'w+', encoding='utf-8') as out:
-        for line in train:
+    if not test:
+        in_file = data_dir + 'training_articles.' + lang2
+        out_file = data_dir + 'vectors6.' + lang1 + '.' + lang2
+    else:
+        in_file = data_dir + 'test_articles.' + lang2
+        out_file = data_dir + 'test_vectors6.' + lang1 + '.' + lang2
+
+    with open(in_file, encoding='utf-8') as inf, open(out_file, 'w+', encoding='utf-8') as out:
+        for line in inf:
             graph_rep = line.strip()
             min_ed_graph = minimize_edit_distance(l1_clusters, graph_rep)
             max_cs_graph = maximize_common_substring(l1_clusters, graph_rep)

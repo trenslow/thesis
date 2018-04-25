@@ -14,11 +14,11 @@ def split(articles):
 
 
 def write_train_test(lang, train, test):
-    with open('training_articles.' + lang, 'w+') as train_out:
+    with open('data/training_articles.' + lang, 'w+') as train_out:
         for art in train:
             for word in art:
                 train_out.write(word + '\n')
-    with open('test_articles.' + lang, 'w+') as test_out:
+    with open('data/test_articles.' + lang, 'w+') as test_out:
         for art in test:
             for word in art:
                 test_out.write(word + '\n')
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     lang2_articles = []
 
     for fn in sorted(os.listdir(corpus_path))[:]:
-        with open('/nethome/trenslow/thesis/' + corpus_path + fn, encoding='utf-8') as article:
+        with open('/nethome/trenslow/corpora/' + corpus_path + fn, encoding='utf-8') as article:
             print('collecting vocab from', fn)
             lines = []
             for line in article:

@@ -7,12 +7,13 @@ def count_ngrams(tokes, en):
 
 
 if __name__ == '__main__':
+    data_dir = 'data/'
     langs = ['ces', 'pol', 'bul', 'rus']
-    for n in range(1, 3):
+    for n in range(1, 2):
         for lang in langs:
             print('---calculating ' + lang + ' ' + str(n) + '-grams---')
-            training_file = 'training_articles.' + lang
-            with open(training_file) as train:
+            training_file = 'training_articles_g2p.' + lang
+            with open(data_dir + training_file) as train:
                 train_tokens = [token.strip() for token in train.readlines()]
             ngrams = count_ngrams(train_tokens, n)
             if n == 0:
@@ -24,7 +25,7 @@ if __name__ == '__main__':
                 n_minus_1_grams = count_ngrams(train_tokens, n-1)
                 model = {ngram: count / n_minus_1_grams[ngram[:-1]] for ngram, count in ngrams.items()}
 
-            with open('test_articles.' + lang) as test:
+            with open(data_dir + 'test_articles_g2p.' + lang) as test:
                 test_tokens = [token.strip() for token in test.readlines()]
             test_grams = count_ngrams(test_tokens, n)
             oov_counts = Counter()

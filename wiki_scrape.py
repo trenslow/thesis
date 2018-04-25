@@ -74,11 +74,11 @@ def scrape(idx, lang1, lang2, corp_path):
 
 if __name__ == '__main__':
     lang1, lang2 = 'ces', 'pol'
-    corpus_path = 'wiki' + '_' + lang1 + '_' + lang2 + '/'
+    corpus_path = '/nethome/trenslow/corpora/' + 'wiki' + '_' + lang1 + '_' + lang2 + '/'
     if not os.path.exists(corpus_path):
         os.makedirs(corpus_path)
 
-    titles = read_article_titles(lang1 + '_and_' + lang2 + '.txt')
+    titles = read_article_titles('data/' + lang1 + '_and_' + lang2 + '.txt')
     index = {i: pair for i, pair in enumerate(titles)}
     scrape(index, lang1, lang2, corpus_path)
 

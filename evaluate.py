@@ -15,7 +15,7 @@ def read_clusters(l1, l2, g2p, lcs):
     else:
         clusts = 'clusters.' + l1 + '.' + l2
 
-    with open(clusts, encoding='utf-8') as cluster_file:
+    with open('data/' + clusts, encoding='utf-8') as cluster_file:
         cluster = ''
         for line in cluster_file:
             stripped = line.strip()
@@ -33,25 +33,21 @@ def read_clusters(l1, l2, g2p, lcs):
                             token, count = word.split()
                             clusters[cluster][token] = float(count)
 
-    sum_mapped_words = 0.0
-    total_c_count = 0
     for c, tokens in sorted(clusters.items(), key=operator.itemgetter(0)):
         cluster_count = sum(tokens.values())
-        total_c_count += cluster_count
-        num_tokens = len(tokens)
-        sum_mapped_words += num_tokens
-        for toke, cnt in tokens.items():
-            pwc[toke] = (cnt / cluster_count, c)
-
+        if cluster_count == 0:
+            count += 1
+        for tkn, cnt in tokens.items():
+            pwc[tkn] = (cnt / cluster_count, c)
     return pwc
 
 
 def read_vocab(lang, g2p):
     vocab = {}
     if g2p:
-        voc = open('vocab_g2p.' + lang)
+        voc = open('data/vocab_g2p.' + lang)
     else:
-        voc = open('vocab.' + lang)
+        voc = open('data/vocab.' + lang)
     for line in voc.readlines()[:100]:
         split = line.strip().split()
         if len(split) == 1:
@@ -65,9 +61,9 @@ def read_vocab(lang, g2p):
 
 
 if __name__ == '__main__':
-    lang1, lang2 = 'rus', 'bul'
-    g2p = True
-    lcs = False
+    lang1, lang2 = 'ces', 'pol'
+    g2p = False
+    lcs = True
     pwc = read_clusters(lang1, lang2, g2p, lcs)
     pc = read_vocab(lang1, g2p)
     oov_words = Counter()
@@ -80,7 +76,7 @@ if __name__ == '__main__':
     else:
         test_file = 'test_articles.' + lang2
 
-    with open(test_file, encoding='utf-8') as test:
+    with open('data/' + test_file, encoding='utf-8') as test:
         sum_surprisals = 0.0
         for line in test:
             num_test_tokens += 1
@@ -93,7 +89,7 @@ if __name__ == '__main__':
                 prob_wc = pwc[token][0]
                 clas = pwc[token][1]
                 prob_c = pc[clas]
-                surprisal = -math.log2(prob_c) - math.log2(prob_wc)
+                surprisal =  -math.log2(prob_c) - math.log2(prob_wc)
                 surprisal_by_token[token] = (surprisal, clas)
                 sum_surprisals += surprisal
             else:

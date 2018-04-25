@@ -1,0 +1,1 @@
+This repository contains all scripts and data used for my master's thesis entitled "Modeling Mutual Intelligibility between Slavic Language Pairs".

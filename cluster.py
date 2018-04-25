@@ -22,12 +22,12 @@ def lcs_length(a, b):
 def read_train_file(lang, g2p):
     vocab = Counter()
     if g2p:
-        with open('training_articles_g2p.' + lang, encoding='utf-8') as train:
+        with open('data/training_articles_g2p.' + lang, encoding='utf-8') as train:
             for line in train:
                 ipa = ''.join(symb for symb in line.strip().split()[1:])
                 vocab.update([ipa])
     else:
-        with open('training_articles.' + lang, encoding='utf-8') as train:
+        with open('data/training_articles.' + lang, encoding='utf-8') as train:
             for w in train:
                 vocab.update([w.strip()])
 
@@ -39,7 +39,7 @@ def write_vocab_file(lang, vocab, g2p):
         vocab_file = 'vocab_g2p.' + lang
     else:
         vocab_file = 'vocab.' + lang
-    with open(vocab_file, 'w+') as voc:
+    with open('data/' + vocab_file, 'w+') as voc:
         for toke, cnt in sorted(vocab.items(), key=operator.itemgetter(1), reverse=True):
             voc.write(toke + ' ' + str(cnt) + '\n')
 
@@ -54,7 +54,7 @@ def write_cluster_file(l1, l2, clusts, g2p, lcs):
     else:
         out_file = 'clusters.' + l1 + '.' + l2
 
-    with open(out_file, 'w+') as clusters_out:
+    with open('data/' + out_file, 'w+') as clusters_out:
         for cluster, words in sorted(clusts.items(), key=operator.itemgetter(0)):
             clusters_out.write(cluster + ':\n')
             clusters_out.write(','.join(word + ' ' + str(count)
