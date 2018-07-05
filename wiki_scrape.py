@@ -74,7 +74,7 @@ def scrape(idx, lang1, lang2, corp_path):
 
 if __name__ == '__main__':
     lang1, lang2 = 'ces', 'pol'
-    corpus_path = '/nethome/trenslow/corpora/' + 'wiki' + '_' + lang1 + '_' + lang2 + '/'
+    corpus_path = '/nethome/trenslow/thesis/data/corpora/' + 'wiki' + '_' + lang1 + '_' + lang2 + '/'
     if not os.path.exists(corpus_path):
         os.makedirs(corpus_path)
 
