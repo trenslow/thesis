@@ -3,5 +3,4 @@ venv/
 logs/
 *articles*
 vectors*
-gold_data_test
-yo.py
+data/corpora
