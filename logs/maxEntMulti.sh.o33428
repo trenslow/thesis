@@ -1,0 +1,78 @@
+ces pol
+vocab size: 623805
+after epoch: 1
+W: [-3.06417346]
+average loss: 13.1462192969
+perplexity: 512071.37411
+time: 40348.306149721146
+after epoch: 2
+W: [-3.90217376]
+average loss: 12.0680350573
+perplexity: 174213.189864
+time: 40359.32287597656
+after epoch: 3
+W: [-4.63526535]
+average loss: 11.4195081462
+perplexity: 91081.3321509
+time: 31412.44638323784
+after epoch: 4
+W: [-5.42557335]
+average loss: 11.0287591677
+perplexity: 61621.0719226
+time: 14745.48390364647
+after epoch: 5
+W: [-6.24578476]
+average loss: 10.7765860881
+perplexity: 47886.3650364
+time: 4920.973350048065
+after epoch: 6
+W: [-7.07920504]
+average loss: 10.599665225
+perplexity: 40121.4035411
+time: 3159.842069387436
+after epoch: 7
+W: [-7.91877413]
+average loss: 10.4641692644
+perplexity: 35037.3272271
+time: 3166.1757984161377
+after epoch: 8
+W: [-8.7613678]
+average loss: 10.3520603158
+perplexity: 31321.5085858
+time: 3163.7760860919952
+after epoch: 9
+W: [-9.60620975]
+average loss: 10.2626963221
+perplexity: 28643.9153852
+time: 3145.6024508476257
+after epoch: 10
+W: [-10.45283508]
+average loss: 10.1779336851
+perplexity: 26316.0338658
+time: 3165.675293445587
+after epoch: 11
+W: [-11.2994976]
+average loss: 10.1088714059
+perplexity: 24559.9269003
+time: 3148.8383576869965
+after epoch: 12
+W: [-12.14770699]
+average loss: 10.0438412405
+perplexity: 23013.6141762
+time: 3145.9831314086914
+after epoch: 13
+W: [-12.99619675]
+average loss: 9.98368642044
+perplexity: 21670.0504026
+time: 3163.991677761078
+after epoch: 14
+W: [-13.84463882]
+average loss: 9.93215174291
+perplexity: 20581.5792365
+time: 3147.129683494568
+after epoch: 15
+W: [-14.6935997]
+average loss: 9.88389999736
+perplexity: 19612.0606911
+time: 3164.721011161804
+model converged

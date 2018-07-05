@@ -1,0 +1,38 @@
+ces pol
+vocab size: 623805
+after epoch: 1
+W: [-1.45833373]
+average loss: 10.430400813
+perplexity: 33873.9246495
+time: 17644.358118534088
+after epoch: 2
+W: [-1.69195461]
+average loss: 9.41594935184
+perplexity: 12282.7283067
+time: 17646.021810531616
+after epoch: 3
+W: [-1.81795955]
+average loss: 9.24300969824
+perplexity: 10332.0882772
+time: 17618.197959899902
+after epoch: 4
+W: [-1.91335297]
+average loss: 9.1211710957
+perplexity: 9146.90725025
+time: 17626.061930418015
+after epoch: 5
+W: [-2.00237894]
+average loss: 9.02876276587
+perplexity: 8339.5352291
+time: 12277.85601758957
+after epoch: 6
+W: [-2.09533763]
+average loss: 8.96055335935
+perplexity: 7789.66675472
+time: 8930.498924970627
+after epoch: 7
+W: [-2.19814229]
+average loss: 8.91551404201
+perplexity: 7446.60901518
+time: 5167.952132701874
+model converged

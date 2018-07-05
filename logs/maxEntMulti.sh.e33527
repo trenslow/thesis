@@ -1,0 +1,27 @@
+2017-11-29 17:27:59.275761: I tensorflow/core/platform/cpu_feature_guard.cc:137] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 FMA
+2017-11-29 17:27:59.714275: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1030] Found device 0 with properties: 
+name: GeForce GTX TITAN X major: 5 minor: 2 memoryClockRate(GHz): 1.076
+pciBusID: 0000:02:00.0
+totalMemory: 11.92GiB freeMemory: 9.36GiB
+2017-11-29 17:28:00.040515: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1030] Found device 1 with properties: 
+name: GeForce GTX TITAN X major: 5 minor: 2 memoryClockRate(GHz): 1.076
+pciBusID: 0000:04:00.0
+totalMemory: 11.92GiB freeMemory: 9.41GiB
+2017-11-29 17:28:00.367359: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1030] Found device 2 with properties: 
+name: GeForce GTX TITAN X major: 5 minor: 2 memoryClockRate(GHz): 1.076
+pciBusID: 0000:83:00.0
+totalMemory: 11.92GiB freeMemory: 9.41GiB
+2017-11-29 17:28:00.679034: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1030] Found device 3 with properties: 
+name: GeForce GTX TITAN X major: 5 minor: 2 memoryClockRate(GHz): 1.076
+pciBusID: 0000:84:00.0
+totalMemory: 11.92GiB freeMemory: 9.41GiB
+2017-11-29 17:28:00.679334: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1045] Device peer to peer matrix
+2017-11-29 17:28:00.679413: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1051] DMA: 0 1 2 3 
+2017-11-29 17:28:00.679422: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1061] 0:   Y Y N N 
+2017-11-29 17:28:00.679428: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1061] 1:   Y Y N N 
+2017-11-29 17:28:00.679435: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1061] 2:   N N Y Y 
+2017-11-29 17:28:00.679440: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1061] 3:   N N Y Y 
+2017-11-29 17:28:00.679449: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1120] Creating TensorFlow device (/device:GPU:0) -> (device: 0, name: GeForce GTX TITAN X, pci bus id: 0000:02:00.0, compute capability: 5.2)
+2017-11-29 17:28:00.679455: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1120] Creating TensorFlow device (/device:GPU:1) -> (device: 1, name: GeForce GTX TITAN X, pci bus id: 0000:04:00.0, compute capability: 5.2)
+2017-11-29 17:28:00.679460: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1120] Creating TensorFlow device (/device:GPU:2) -> (device: 2, name: GeForce GTX TITAN X, pci bus id: 0000:83:00.0, compute capability: 5.2)
+2017-11-29 17:28:00.679464: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1120] Creating TensorFlow device (/device:GPU:3) -> (device: 3, name: GeForce GTX TITAN X, pci bus id: 0000:84:00.0, compute capability: 5.2)

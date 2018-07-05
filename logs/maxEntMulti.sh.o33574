@@ -1,0 +1,23 @@
+rus bul
+vocab size: 441943
+after epoch: 1
+W: [-1.54560208]
+average loss: 9.46694445274
+perplexity: 12925.3328664
+time: 2440.736826658249
+after epoch: 2
+W: [-2.00209236]
+average loss: 8.45236397631
+perplexity: 4686.13757006
+time: 2458.6325676441193
+after epoch: 3
+W: [-2.44306326]
+average loss: 8.32946436258
+perplexity: 4144.1971706
+time: 2471.276170730591
+after epoch: 4
+W: [-2.76723385]
+average loss: 8.2879201072
+perplexity: 3975.55685744
+time: 2388.468407392502
+model converged

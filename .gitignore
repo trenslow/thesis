@@ -1,6 +1,4 @@
 .idea/
-venv/
-logs/
 *articles*
 vectors*
 data/corpora
