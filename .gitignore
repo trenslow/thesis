@@ -1,3 +1,6 @@
-.idea/workspace.xml
-*articles*
-vectors*
+__pycache__/
+.idea/
+data/raw/*articles*
+data/processed/*articles*
+data/modeling/*vectors*
+.DS_Store/
