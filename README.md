@@ -8,12 +8,12 @@ The repository structure loosely follows that of the Team Data Science Process d
 ## Software Dependencies
 All scripts were written in Python 3, with additional packages used for different tasks.
 
-For data processing:
+Packages for data processing:
 - [NLTK](https://www.nltk.org/install.html)
 - [wikipedia](https://pypi.org/project/wikipedia/)
 - [PyYAML](https://pyyaml.org/wiki/PyYAMLDocumentation)
 
-For modeling:
+Packages for modeling:
 - [TensorFlow](https://www.tensorflow.org/install) (code was written when v1.7 was latest, may be broken now)
 - For training TensorFlow models on NVIDIA GPUs, follow the instructions at this [link](https://www.tensorflow.org/install/gpu).
 

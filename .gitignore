@@ -1,6 +1,7 @@
 __pycache__/
 .idea/
-data/raw/*articles*
+.vscode/
+data/raw/pron_data/
 data/processed/*articles*
 data/modeling/*vectors*
 .DS_Store/
