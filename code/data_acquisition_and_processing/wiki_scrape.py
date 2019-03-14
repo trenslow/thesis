@@ -7,6 +7,8 @@
 
 import wikipedia
 import os
+import sys
+import argparse
 import operator
 import json
 
@@ -24,7 +26,7 @@ def scrape(idx, lang1, lang2, corp_path):
     wikipedia.set_rate_limiting(True)
     lang1_disamb_count, lang2_disamb_count = 0, 0
     lang1_no_summ_count, lang2_no_summ_count = 0, 0
-    for i, pair in sorted(idx.items(), key=operator.itemgetter(0))[:]:
+    for i, pair in sorted(idx.items(), key=operator.itemgetter(0)):
         if i % 10 == 0:
             print("last update at article:", i)
         wikipedia.set_lang(lang1)
@@ -42,8 +44,9 @@ def scrape(idx, lang1, lang2, corp_path):
             print("json decode error")
             continue
         if lang1_summ:
-            with open(corp_path + str(i) + '_' + lang1 + '.txt', 'w+') as out1:
+            with open(corp_path + '.'.join([str(i), lang1]), 'w+') as out1:
                 out1.write(lang1_summ)
+            continue
         else:
             lang1_no_summ_count += 1
             print(pair[0], "doesn't have a summary in", lang1, "!")
@@ -64,8 +67,9 @@ def scrape(idx, lang1, lang2, corp_path):
             print("json decode error")
             continue
         if lang2_summ:
-            with open(corp_path + str(i) + '_' + lang2 + '.txt', 'w+') as out2:
+            with open(corp_path + '.'.join([str(i), lang2]), 'w+') as out2:
                 out2.write(lang2_summ)
+            continue
         else:
             lang2_no_summ_count += 1
             print(pair[1], "doesn't have a summary in", lang2, "!")
@@ -73,12 +77,26 @@ def scrape(idx, lang1, lang2, corp_path):
 
 
 if __name__ == '__main__':
-    lang1, lang2 = 'ces', 'pol'
-    corpus_path = '/nethome/trenslow/thesis/data/corpora/' + 'wiki' + '_' + lang1 + '_' + lang2 + '/'
-    if not os.path.exists(corpus_path):
-        os.makedirs(corpus_path)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--lang1', help='the first language in a given pair')
+    parser.add_argument('--lang2', help='the second language in a given pair')
+    parser.add_argument('--corpora-path', help='location of corpora directory on disk')
+    args = parser.parse_args()
+    lang1, lang2 = args.lang1, args.lang2
+    corpora_path = args.corpora_path
+    if not os.path.exists(corpora_path):
+        os.makedirs(corpora_path)
 
-    titles = read_article_titles('data/' + lang1 + '_and_' + lang2 + '.txt')
+    titles = read_article_titles(corpora_path + '.'.join(['titles', lang1, lang2]) )
     index = {i: pair for i, pair in enumerate(titles)}
-    scrape(index, lang1, lang2, corpus_path)
+
+    iso_map = {
+        'bul': 'bg',
+        'ces': 'cs',
+        'pol': 'pl',
+        'rus': 'ru'
+    }
+
+    corpus_dir_name = corpora_path + 'wiki' + '_' + lang1 + '_' + lang2 + '/'
+    scrape(index, iso_map[lang1], iso_map[lang2], corpus_dir_name)
 

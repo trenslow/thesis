@@ -4,6 +4,8 @@
 # takes the first 90% of articles as training data and the remaining 10% as test data.
 
 import os
+import sys
+import argparse
 import string
 import random
 
@@ -13,27 +15,34 @@ def split(articles):
     return articles[:int(0.9 * num_articles)], articles[num_articles - int(0.1 * num_articles):]
 
 
-def write_train_test(lang, train, test):
-    with open('data/training_articles.' + lang, 'w+') as train_out:
+def write_train_test(dir_path, lang, train, test):
+    with open(dir_path + 'training_articles.' + lang, 'w+') as train_out:
         for art in train:
             for word in art:
                 train_out.write(word + '\n')
-    with open('data/test_articles.' + lang, 'w+') as test_out:
+    with open(dir_path + 'test_articles.' + lang, 'w+') as test_out:
         for art in test:
             for word in art:
                 test_out.write(word + '\n')
 
 
 if __name__ == '__main__':
-    lang1, lang2 = 'bul', 'rus'
-    corpus_path = 'wiki' + '_' + lang1 + '_' + lang2 + '/'
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--lang1', help='the first language in a given pair')
+    parser.add_argument('--lang2', help='the second language in a given pair')
+    parser.add_argument('--corpora-path', help='location of corpus file on disk')
+    args = parser.parse_args()
+    lang1, lang2 = args.lang1, args.lang2
+    corpora_path = args.corpora_path
+
+    corpus_dir_name = 'wiki' + '_' + lang1 + '_' + lang2 + '/'
     exclude = set(string.punctuation)
     exclude.update({'„', '°', '“', '′', '«', '»', '×', '—', '–', '’', '‘', '”', 'ˈ', '″', 'ː'})
     lang1_articles = []
     lang2_articles = []
 
-    for fn in sorted(os.listdir(corpus_path))[:]:
-        with open('/nethome/trenslow/corpora/' + corpus_path + fn, encoding='utf-8') as article:
+    for fn in sorted(os.listdir(corpora_path + corpus_dir_name)):
+        with open(corpora_path + corpus_dir_name + fn, encoding='utf-8') as article:
             print('collecting vocab from', fn)
             lines = []
             for line in article:
@@ -50,5 +59,6 @@ if __name__ == '__main__':
     lang1_train, lang1_test = split(lang1_articles)
     print('splitting articles for ' + lang2)
     lang2_train, lang2_test = split(lang2_articles)
-    write_train_test(lang1, lang1_train, lang1_test)
-    write_train_test(lang2, lang2_train, lang2_test)
+    processed_data_dir = 'data/processed/'
+    write_train_test(processed_data_dir, lang1, lang1_train, lang1_test)
+    write_train_test(processed_data_dir, lang2, lang2_train, lang2_test)

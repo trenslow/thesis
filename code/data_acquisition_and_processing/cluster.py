@@ -4,6 +4,7 @@
 # 1 and assigning each token from language 2 to these clusters based on minimal Levenshtein distance or the Longest Common
 # Substring. It then calculates the probabilities of a word given the class it belongs to.
 
+import argparse
 import operator
 from collections import Counter
 from nltk.metrics import edit_distance
@@ -19,42 +20,43 @@ def lcs_length(a, b):
     return table[-1][-1]
 
 
-def read_train_file(lang, g2p):
+def read_train_file(dir_path, lang, g2p):
     vocab = Counter()
     if g2p:
-        with open('data/training_articles_g2p.' + lang, encoding='utf-8') as train:
+        with open(dir_path + 'training_articles_g2p.' + lang, encoding='utf-8') as train:
             for line in train:
                 ipa = ''.join(symb for symb in line.strip().split()[1:])
                 vocab.update([ipa])
     else:
-        with open('data/training_articles.' + lang, encoding='utf-8') as train:
+        with open(dir_path + 'training_articles.' + lang, encoding='utf-8') as train:
             for w in train:
                 vocab.update([w.strip()])
 
     return vocab
 
 
-def write_vocab_file(lang, vocab, g2p):
+def write_vocab_file(dir_path, lang, vocab, g2p):
     if g2p:
         vocab_file = 'vocab_g2p.' + lang
     else:
         vocab_file = 'vocab.' + lang
-    with open('data/' + vocab_file, 'w+') as voc:
+    with open(dir_path + vocab_file, 'w+') as voc:
         for toke, cnt in sorted(vocab.items(), key=operator.itemgetter(1), reverse=True):
             voc.write(toke + ' ' + str(cnt) + '\n')
 
 
-def write_cluster_file(l1, l2, clusts, g2p, lcs):
+def write_cluster_file(dir_path, l1, l2, clusts, g2p, lcs):
+    out_file_name = ''
     if g2p and lcs:
-        out_file = 'clusters_g2p_lcs.' + l1 + '.' + l2
+        out_file_name = '.'.join(['clusters_g2p_lcs', l1, l2])
     elif g2p:
-        out_file = 'clusters_g2p.' + l1 + '.' + l2
+        out_file_name = '.'.join(['clusters_g2p', l1, l2])
     elif lcs:
-        out_file = 'clusters_lcs.' + l1 + '.' + l2
+        out_file_name = '.'.join(['clusters_lcs', l1, l2])
     else:
-        out_file = 'clusters.' + l1 + '.' + l2
+        out_file_name = '.'.join(['clusters', l1, l2])
 
-    with open('data/' + out_file, 'w+') as clusters_out:
+    with open(dir_path + out_file_name, 'w+') as clusters_out:
         for cluster, words in sorted(clusts.items(), key=operator.itemgetter(0)):
             clusters_out.write(cluster + ':\n')
             clusters_out.write(','.join(word + ' ' + str(count)
@@ -63,16 +65,26 @@ def write_cluster_file(l1, l2, clusts, g2p, lcs):
 
 
 if __name__ == '__main__':
-    lang1, lang2 = 'rus', 'bul'
-    g2p = True
-    lcs = False
-    lang1_vocab = read_train_file(lang1, g2p)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--lang1', help='the first language in a given pair')
+    parser.add_argument('--lang2', help='the second language in a given pair')
+    parser.add_argument('--g2p', default=False)
+    parser.add_argument('--lcs', default=False)
+    args = parser.parse_args()
+
+    lang1, lang2 = args.lang1, args.lang2
+    g2p = args.g2p
+    lcs = args.lcs
+    raw_data_dir = 'data/raw/'
+    processed_data_dir = 'data/processed'
+
+    lang1_vocab = read_train_file(processed_data_dir, lang1, g2p)
     most_freq_l1 = {t: cnt for t, cnt in sorted(lang1_vocab.items(), key=operator.itemgetter(1), reverse=True)[:100]}
-    lang2_vocab = read_train_file(lang2, g2p)
+    lang2_vocab = read_train_file(processed_data_dir, lang2, g2p)
     clusters = {c: {} for c in most_freq_l1}
 
-    write_vocab_file(lang1, lang1_vocab, g2p)
-    write_vocab_file(lang2, lang2_vocab, g2p)
+    write_vocab_file(processed_data_dir, lang1, lang1_vocab, g2p)
+    write_vocab_file(processed_data_dir, lang2, lang2_vocab, g2p)
 
     sorted_clusters = sorted(most_freq_l1.items(), key=operator.itemgetter(1), reverse=True)
     for word, count in lang2_vocab.items():
@@ -94,4 +106,4 @@ if __name__ == '__main__':
         # print(word, 'assigned to:', old_clust)
         clusters[old_clust][word] = count
 
-    write_cluster_file(lang1, lang2, clusters, g2p, lcs)
+    write_cluster_file(processed_data_dir, lang1, lang2, clusters, g2p, lcs)
