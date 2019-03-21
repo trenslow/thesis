@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
     for fn in sorted(os.listdir(corpora_path + corpus_dir_name)):
         with open(corpora_path + corpus_dir_name + fn, encoding='utf-8') as article:
-            print('collecting vocab from', fn)
+            print('preprocessing text from', fn)
             lines = []
             for line in article:
                 tokens = line.strip().split()

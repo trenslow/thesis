@@ -76,7 +76,7 @@ if __name__ == '__main__':
     g2p = args.g2p
     lcs = args.lcs
     raw_data_dir = 'data/raw/'
-    processed_data_dir = 'data/processed'
+    processed_data_dir = 'data/processed/'
 
     lang1_vocab = read_train_file(processed_data_dir, lang1, g2p)
     most_freq_l1 = {t: cnt for t, cnt in sorted(lang1_vocab.items(), key=operator.itemgetter(1), reverse=True)[:100]}

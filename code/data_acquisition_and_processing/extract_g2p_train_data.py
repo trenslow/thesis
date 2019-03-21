@@ -1,3 +1,4 @@
+# script used for extracting the grapheme to phoneme training data used to train Sequitur's g2p model
 import operator
 import string
 import random
@@ -47,11 +48,11 @@ def write_g2p(out_dir, data, lang):
     num_words = len(data)
     train, test = sorted_data[:int(0.95 * num_words)], sorted_data[num_words - int(0.05 * num_words):]
 
-    with open(out_dir + '.'.join(['training_articles_ipa', lang])  , 'w+') as tr:
+    with open(out_dir + '.'.join(['g2p_train_data', lang])  , 'w+') as tr:
         for t in train:
             tr.write(t[0] + ' ' + t[1] + '\n')
 
-    with open(out_dir + '.'.join(['test_articles_ipa', lang]), 'w+') as te:
+    with open(out_dir + '.'.join(['g2p_test_data', lang]), 'w+') as te:
         for t in test:
             te.write(t[0] + ' ' + t[1] + '\n')
 
