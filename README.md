@@ -20,7 +20,8 @@ Packages for modeling:
 TODO:
 
 - refactor all paths in scripts
-- rename all log files in a smart way to reflect which models were run with which features
 - check compatability with latest TensorFlow version
-- generalize scripts with command line arguments that allow for easy switching between language and parameters
+- find more efficient way to store scraped wikipedia articles, with the goal of making them easier to share and process
+- store all large data in compressed files to save disk space
+- reformat log files in a smart way to reflect which feature set used to train model
 
