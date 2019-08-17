@@ -2,8 +2,7 @@ __pycache__
 .idea
 .vscode
 data/raw/pron_data/
-data/processed/*articles*
-data/processed/g2p*
+data/processed/
 data/modeling/*vectors*
 data/modeling/g2p_model*
 **/.DS_Store
