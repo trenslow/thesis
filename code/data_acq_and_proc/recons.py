@@ -1,10 +1,12 @@
 import yaml
+import os
 
 # at some point, needs to be generalized to all files
 lang_pairs = [('bul', 'rus'), ('ces', 'pol'), ('rus', 'bul'), ('pol', 'ces')]
 lang_map = {'bul': 'BG', 'ces': 'CS', 'pol': 'PL', 'rus': 'RU'}
-raw_data_dir = 'data/raw/'
-processed_data_dir = 'data/processed/'
+proj_root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.getcwd())))
+raw_data_dir = os.path.join(proj_root_dir, 'data', 'raw/')
+processed_data_dir = os.path.join(proj_root_dir, 'data', 'processed/')
 
 for pair in lang_pairs:
 	lang1, lang2 = pair[0], pair[1]

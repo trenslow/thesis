@@ -7,10 +7,6 @@ MODEL_OUT_DIR="$DIR/../../data/modeling"
 # folder where built Sequitur resides
 G2P_DIR="$DIR/../../g2p"
 
-echo $DIR
-echo $TRAIN_DATA_DIR
-echo $MODEL_OUT_DIR
-
 for lang in bul ces pol rus
 do
     for ngram in 1 2 3 4 5

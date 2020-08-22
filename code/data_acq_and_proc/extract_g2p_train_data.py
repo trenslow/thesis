@@ -58,8 +58,9 @@ def write_g2p(out_dir, data, lang):
 
 
 if __name__ == '__main__':
-    processed_data_dir = 'data/processed/'
-    all_file_path = 'data/raw/pron_data/all.phoible'
+    proj_root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.getcwd())))
+    processed_data_dir = os.path.join(proj_root_dir, 'data', 'processed/')
+    all_file_path = os.path.join(proj_root_dir, 'data', 'raw', 'pron_data', 'all.phoible')
     bul_data, ces_data, pol_data, rus_data = read_in(all_file_path)
 
     write_g2p(processed_data_dir, bul_data, 'bul')

@@ -8,6 +8,7 @@ import argparse
 import operator
 from collections import Counter
 from nltk.metrics import edit_distance
+import os
 
 
 def lcs_length(a, b):
@@ -75,8 +76,9 @@ if __name__ == '__main__':
     lang1, lang2 = args.lang1, args.lang2
     g2p = args.g2p
     lcs = args.lcs
-    raw_data_dir = 'data/raw/'
-    processed_data_dir = 'data/processed/'
+    proj_root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.getcwd())))
+    raw_data_dir = os.path.join(proj_root_dir, 'data', 'raw/')
+    processed_data_dir = os.path.join(proj_root_dir, 'data', 'processed/')
 
     lang1_vocab = read_train_file(processed_data_dir, lang1, g2p)
     most_freq_l1 = {t: cnt for t, cnt in sorted(lang1_vocab.items(), key=operator.itemgetter(1), reverse=True)[:100]}

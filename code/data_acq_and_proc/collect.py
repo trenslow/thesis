@@ -59,6 +59,7 @@ if __name__ == '__main__':
     lang1_train, lang1_test = split(lang1_articles)
     print('splitting articles for ' + lang2)
     lang2_train, lang2_test = split(lang2_articles)
-    processed_data_dir = 'data/processed/'
+    proj_root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.getcwd())))
+    processed_data_dir = os.path.join(proj_root_dir, 'data', 'processed/')
     write_train_test(processed_data_dir, lang1, lang1_train, lang1_test)
     write_train_test(processed_data_dir, lang2, lang2_train, lang2_test)

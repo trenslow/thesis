@@ -20,8 +20,8 @@ Packages for modeling:
 TODO:
 
 - refactor all paths in scripts
-- check compatability with latest TensorFlow version
+- create requirements.txt file for python dependencies
 - find more efficient way to store scraped wikipedia articles, with the goal of making them easier to share and process
 - store all large data in compressed files to save disk space
-- reformat log files in a smart way to reflect which feature set used to train model
+- name log files in a smart way to reflect which feature set used to train model
 
